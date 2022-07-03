@@ -1,6 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { google } from "googleapis";
-import { listFitnessHeartRateDatasets } from "../../../external-apis/google-fit";
+import {
+  getUserEmail,
+  listFitnessHeartRateDatasets,
+} from "../../../external-apis/google-fit";
 type Data = {
   name: string;
 };
@@ -16,6 +19,7 @@ export default async function handler(
   );
   let { tokens } = await oauth2Client.getToken(req.query.code as string);
   oauth2Client.setCredentials(tokens);
+  const userEmail = await getUserEmail(oauth2Client);
   const now = new Date();
   // 24 hours ago
   const start = new Date(now.getTime() - 24 * 60 * 60 * 1000);

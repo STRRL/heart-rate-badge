@@ -95,3 +95,30 @@ export async function latestHeartRate(
     };
   });
 }
+
+export async function getUserEmail(
+  auth:
+    | string
+    | OAuth2Client
+    | JWT
+    | Compute
+    | UserRefreshClient
+    | BaseExternalAccountClient
+    | GoogleAuth
+): Promise<String> {
+  const client = google.oauth2("v2");
+  return new Promise((resolve, reject) => {
+    client.userinfo.v2.me.get(
+      {
+        auth: auth,
+      },
+      (err, resp) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(resp!.data.email!);
+        }
+      }
+    );
+  });
+}
