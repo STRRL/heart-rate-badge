@@ -1,8 +1,9 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-import { google } from 'googleapis';
+import type { NextApiRequest, NextApiResponse } from "next";
+import { google } from "googleapis";
+import { listFitnessHeartRateDatasets } from "../../../external-apis/google-fit";
 type Data = {
-  name: string
-}
+  name: string;
+};
 
 export default async function handler(
   req: NextApiRequest,
@@ -15,13 +16,18 @@ export default async function handler(
   );
   let { tokens } = await oauth2Client.getToken(req.query.code as string);
   oauth2Client.setCredentials(tokens);
-  const fitness = google.fitness('v1');
-  fitness.users.dataSources.list({
-    auth: oauth2Client
-  }, (err, resp) => {
-    if (err) return console.log('The API returned an error: ' + err)
-    console.log(resp?.data)
-  })
+  const now = new Date();
+  // 24 hours ago
+  const start = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+  const datasets = await listFitnessHeartRateDatasets(
+    oauth2Client,
+    dateToNanoSeconds(start),
+    dateToNanoSeconds(now)
+  );
 
-  res.status(200).json({ name: 'John Doe' })
+  res.status(200).json({ name: datasets as any });
+}
+
+function dateToNanoSeconds(date: Date) {
+  return date.getTime() * 1000000;
 }

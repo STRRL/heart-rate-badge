@@ -10,10 +10,12 @@
   },
   "dependencies": {
     "googleapis": "^104.0.0",
+    "nanoseconds": "^1.0.1",
     "next": "12.2.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "serverless-mysql": "^1.5.4"
+    "serverless-mysql": "^1.5.4",
+    "timestamp-nano": "^1.0.0"
   },
   "devDependencies": {
     "@types/node": "18.0.0",
