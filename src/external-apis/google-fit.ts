@@ -56,7 +56,6 @@ export async function listFitnessHeartRateDatasets(
         datasetId: `${fromUnixNano}-${toUnixNano}`,
         userId: "me",
         auth: auth,
-        limit: 10,
         dataSourceId:
           "derived:com.google.heart_rate.bpm:com.google.android.gms:merge_heart_rate_bpm",
       },
@@ -88,12 +87,16 @@ export async function latestHeartRate(
     fromUnixNano,
     toUnixNano
   );
-  return datasets.point?.map((point) => {
-    return {
-      time: point.endTimeNanos!,
-      value: point.value![0].fpVal!,
-    };
-  });
+  return datasets.point
+    ?.sort((a, b) => {
+      return parseInt(a.endTimeNanos!) - parseInt(b.endTimeNanos!);
+    })
+    .map((point) => {
+      return {
+        time: parseInt(point.endTimeNanos!),
+        value: point.value![0].fpVal!,
+      };
+    })[datasets.point.length - 1];
 }
 
 export async function getUserEmail(

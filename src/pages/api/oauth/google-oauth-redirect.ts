@@ -5,9 +5,7 @@ import {
   listFitnessHeartRateDatasets,
 } from "../../../external-apis/google-fit";
 import { updateUserGoogleOAuthToken } from "../../../persistent/user-oauth";
-type Data = {
-  name: string;
-};
+type Data = {};
 
 export default async function handler(
   req: NextApiRequest,
@@ -22,18 +20,6 @@ export default async function handler(
   oauth2Client.setCredentials(tokens);
   const userEmail = await getUserEmail(oauth2Client);
   await updateUserGoogleOAuthToken(userEmail, tokens);
-  const now = new Date();
-  // 24 hours ago
-  const start = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-  const datasets = await listFitnessHeartRateDatasets(
-    oauth2Client,
-    dateToNanoSeconds(start),
-    dateToNanoSeconds(now)
-  );
 
-  res.status(200).json({ name: datasets as any });
-}
-
-function dateToNanoSeconds(date: Date) {
-  return date.getTime() * 1000000;
+  res.status(200).json({});
 }

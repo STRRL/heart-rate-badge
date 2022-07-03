@@ -19,10 +19,12 @@ export async function updateUserGoogleOAuthToken(
     );
   }
 
-  const user =( (await mysql.query(
-    "SELECT * FROM users WHERE auth_type = ? and oauth_google_email = ?",
-    ["google_oauth", googleUserInfoEmail]
-  )) as Array<any>)[0];
+  const user = (
+    (await mysql.query(
+      "SELECT * FROM users WHERE auth_type = ? and oauth_google_email = ?",
+      ["google_oauth", googleUserInfoEmail]
+    )) as Array<any>
+  )[0];
 
   const existedGoogleOAuthCredentials = (await mysql.query(
     "SELECT * FROM google_oauth_credentials WHERE user_id = ?",
@@ -58,4 +60,21 @@ export async function updateUserGoogleOAuthToken(
   }
 
   return dispose();
+}
+
+export async function fetchCredentialsWithUserId(
+  userID: number
+): Promise<Credentials> {
+  const { mysql, dispose } = withMySQL();
+  const existedGoogleOAuthCredentials = (await mysql.query(
+    "SELECT * FROM google_oauth_credentials WHERE user_id = ?",
+    [userID]
+  )) as Array<any>;
+  await dispose();
+  if (existedGoogleOAuthCredentials.length == 0) {
+    throw new Error("No Google OAuth credentials found");
+  }
+
+  const credentials = existedGoogleOAuthCredentials[0] as Credentials;
+  return credentials;
 }
