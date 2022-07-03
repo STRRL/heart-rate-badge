@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "google-auth-library": "^8.1.0",
     "googleapis": "^104.0.0",
     "nanoseconds": "^1.0.1",
     "next": "12.2.0",

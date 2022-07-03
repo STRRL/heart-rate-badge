@@ -4,6 +4,7 @@ import {
   getUserEmail,
   listFitnessHeartRateDatasets,
 } from "../../../external-apis/google-fit";
+import { updateUserGoogleOAuthToken } from "../../../persistent/user-oauth";
 type Data = {
   name: string;
 };
@@ -20,6 +21,7 @@ export default async function handler(
   let { tokens } = await oauth2Client.getToken(req.query.code as string);
   oauth2Client.setCredentials(tokens);
   const userEmail = await getUserEmail(oauth2Client);
+  await updateUserGoogleOAuthToken(userEmail, tokens);
   const now = new Date();
   // 24 hours ago
   const start = new Date(now.getTime() - 24 * 60 * 60 * 1000);
